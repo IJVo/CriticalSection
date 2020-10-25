@@ -11,20 +11,18 @@ use Throwable;
 final class CriticalSection implements ICriticalSection
 {
 
-	/**
-	 * @var IDriver
-	 */
+	/** @var IDriver */
 	private $driver;
 
-	/**
-	 * @var bool[]
-	 */
+	/** @var bool[] */
 	private $locks = [];
+
 
 	public function __construct(IDriver $driver)
 	{
 		$this->driver = $driver;
 	}
+
 
 	public function __destruct()
 	{
@@ -49,10 +47,11 @@ final class CriticalSection implements ICriticalSection
 		}
 	}
 
-	public function enter(string $label) : bool
+
+	public function enter(string $label): bool
 	{
 		if ($this->isEntered($label)) {
-			return FALSE;
+			return false;
 		}
 
 		$result = $this->driver->acquireLock($label);
@@ -63,10 +62,11 @@ final class CriticalSection implements ICriticalSection
 		return $result;
 	}
 
-	public function leave(string $label) : bool
+
+	public function leave(string $label): bool
 	{
 		if (!$this->isEntered($label)) {
-			return FALSE;
+			return false;
 		}
 
 		$result = $this->driver->releaseLock($label);
@@ -77,9 +77,9 @@ final class CriticalSection implements ICriticalSection
 		return $result;
 	}
 
-	public function isEntered(string $label) : bool
-	{
-		return array_key_exists($label, $this->locks) && $this->locks[$label] === TRUE;
-	}
 
+	public function isEntered(string $label): bool
+	{
+		return array_key_exists($label, $this->locks) && $this->locks[$label] === true;
+	}
 }

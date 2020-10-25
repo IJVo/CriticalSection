@@ -1,12 +1,9 @@
 language: php
-
-cache:
-  directories:
-    - $HOME/.composer/cache
-
 php:
-  - 7.0
   - 7.1
+  - 7.2
+  - 7.3
+  - 7.4
 
 services:
   - redis-server
@@ -27,12 +24,46 @@ install:
   - travis_retry composer install --no-interaction --optimize-autoloader --prefer-dist
   - tests/travis.phpredis.sh
 
-before_script:
-  - ./vendor/bin/parallel-lint -e php,phpt --exclude vendor .
-  - ./vendor/bin/phpstan analyze --no-progress -l 5 -c ./phpstan.neon ./
-
 script:
   - ./vendor/bin/tester -s -p $PHP_BIN -c ./tests/php.ini-unix -j 32 ./tests/CriticalSectionTests
 
+
+jobs:
+  include:
+  - stage: Parallel Lint
+    php: 7.4
+    script:
+    - composer run-script php-parallel-lint-install
+    - composer run-script php-parallel-lint
+
+  - stage: Code Checker
+    php: 7.4
+    script:
+    - composer run-script code-checker-install
+    - composer run-script code-checker
+
+  - stage: Phpstan
+    php: 7.4
+    script:
+    - composer run-script phpstan-install
+    - composer run-script phpstan
+
+  - stage: Test Coverage
+    php: 7.4
+    script:
+    - composer run-script coverage
+
+  allow_failures:
+  - stage: Parallel Lint
+  - stage: Code Checker
+  - stage: Test Coverage
+  - stage: Phpstan
+
+
 after_failure:
-  - 'for i in $(find ./tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done'
+  -  for i in $(find   tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
+
+
+cache:
+  directories:
+    - $HOME/.composer/cache

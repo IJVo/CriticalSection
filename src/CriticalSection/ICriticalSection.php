@@ -10,16 +10,16 @@ interface ICriticalSection
 	/**
 	 * Enters critical section.
 	 */
-	public function enter(string $label) : bool;
+	public function enter(string $label): bool;
 
 	/**
 	 * Leaves critical section.
 	 */
-	public function leave(string $label) : bool;
+	public function leave(string $label): bool;
 
 	/**
 	 * Returns TRUE if critical section is entered.
 	 */
-	public function isEntered(string $label) : bool;
+	public function isEntered(string $label): bool;
 
 }

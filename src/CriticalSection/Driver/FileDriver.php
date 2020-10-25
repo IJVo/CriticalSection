@@ -9,15 +9,12 @@ use stekycz\CriticalSection\Exception\CriticalSectionException;
 class FileDriver implements IDriver
 {
 
-	/**
-	 * @var resource[]
-	 */
+	/** @var resource[] */
 	private $handles = [];
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $lockFilesDir;
+
 
 	public function __construct(string $lockFilesDir)
 	{
@@ -26,50 +23,50 @@ class FileDriver implements IDriver
 		$this->lockFilesDir = $lockFilesDir;
 	}
 
-	public function acquireLock(string $label) : bool
+	public function acquireLock(string $label): bool
 	{
-		$handle = fopen($this->getFilePath($label), "w+b");
-		if ($handle === FALSE) {
-			return FALSE;
+		$handle = fopen($this->getFilePath($label), 'w+b');
+		if ($handle === false) {
+			return false;
 		}
 
 		$locked = flock($handle, LOCK_EX | LOCK_NB);
-		if ($locked === FALSE) {
+		if ($locked === false) {
 			fclose($handle);
 
-			return FALSE;
+			return false;
 		}
 
 		$this->handles[$label] = $handle;
 
-		return TRUE;
+		return true;
 	}
 
-	public function releaseLock(string $label) : bool
+	public function releaseLock(string $label): bool
 	{
 		if (!isset($this->handles[$label])) {
-			return FALSE;
+			return false;
 		}
 
 		$unlocked = flock($this->handles[$label], LOCK_UN);
-		if ($unlocked === FALSE) {
-			return FALSE;
+		if ($unlocked === false) {
+			return false;
 		}
 
 		fclose($this->handles[$label]);
 		unset($this->handles[$label]);
 
-		return TRUE;
+		return true;
 	}
 
-	private function getFilePath(string $label) : string
+	private function getFilePath(string $label): string
 	{
 		return $this->lockFilesDir . DIRECTORY_SEPARATOR . sha1($label);
 	}
 
 	private static function createDir(string $dir)
 	{
-		if (!is_dir($dir) && !@mkdir($dir, 0777, TRUE) && !is_dir($dir)) { // @ - dir may already exist
+		if (!is_dir($dir) && !@mkdir($dir, 0777, true) && !is_dir($dir)) { // @ - dir may already exist
 			throw new CriticalSectionException("Unable to create directory '$dir'. " . error_get_last()['message']);
 		}
 	}

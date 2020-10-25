@@ -11,49 +11,50 @@ namespace stekycz\CriticalSection\Driver;
 class SemaphoreDriver implements IDriver
 {
 
-	/**
-	 * @var resource[]
-	 */
+	/** @var resource[] */
 	private $handles = [];
 
-	public function acquireLock(string $label) : bool
+
+	public function acquireLock(string $label): bool
 	{
 		$key = self::transformLabelToIntegerKey($label);
 
+		/** @var resource|bool $semaphore */
 		$semaphore = sem_get($key);
-		if (!$semaphore) {
-			return FALSE;
+		if (is_bool($semaphore) && $semaphore === false) {
+			return false;
 		}
 
-		$result = sem_acquire($semaphore, TRUE);
+		$result = sem_acquire($semaphore, true);
 		if (!$result) {
-			return FALSE;
+			return false;
 		}
 
 		$this->handles[$label] = $semaphore;
 
-		return TRUE;
+		return true;
 	}
 
-	public function releaseLock(string $label) : bool
+
+	public function releaseLock(string $label): bool
 	{
-		if (!isset($this->handles[$label])) {
-			return FALSE;
+		if (array_key_exists($label, $this->handles) === false) {
+			return false;
 		}
 
 		$result = sem_release($this->handles[$label]);
 		if (!$result) {
-			return FALSE;
+			return false;
 		}
 
 		unset($this->handles[$label]);
 
-		return TRUE;
+		return true;
 	}
 
-	private static function transformLabelToIntegerKey(string $label) : int
+
+	private static function transformLabelToIntegerKey(string $label): int
 	{
 		return crc32($label);
 	}
-
 }

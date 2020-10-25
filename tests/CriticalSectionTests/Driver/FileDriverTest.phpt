@@ -13,30 +13,28 @@ use stekycz\CriticalSection\Exception\CriticalSectionException;
 use TestCase;
 use Tester\Assert;
 
-require_once(__DIR__ . '/../bootstrap.php');
+require_once __DIR__ . '/../bootstrap.php';
 
 class FileDriverTest extends TestCase
 {
 
-	const TEST_LABEL = "test";
+	public const TEST_LABEL = 'test';
 
-	/**
-	 * @var FileDriver
-	 */
+	/** @var FileDriver */
 	private $driver;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $filesDir;
+
 
 	protected function setUp()
 	{
 		parent::setUp();
 		$this->filesDir = TEMP_DIR . '/critical-section';
-		mkdir($this->filesDir, 0777, TRUE);
+		mkdir($this->filesDir, 0777, true);
 		$this->driver = new FileDriver($this->filesDir);
 	}
+
 
 	protected function tearDown()
 	{
@@ -44,10 +42,12 @@ class FileDriverTest extends TestCase
 		parent::tearDown();
 	}
 
+
 	public function testCanAcquireOnce()
 	{
 		Assert::true($this->driver->acquireLock(self::TEST_LABEL));
 	}
+
 
 	public function testCanReleaseOnceAndOnlyOnce()
 	{
@@ -56,10 +56,12 @@ class FileDriverTest extends TestCase
 		Assert::false($this->driver->releaseLock(self::TEST_LABEL));
 	}
 
+
 	public function testReleaseWithoutAcquire()
 	{
 		Assert::false($this->driver->releaseLock(self::TEST_LABEL));
 	}
+
 
 	public function testCanAcquireAndReleaseMultipleTimes()
 	{
@@ -71,6 +73,7 @@ class FileDriverTest extends TestCase
 		Assert::true($this->driver->releaseLock(self::TEST_LABEL));
 	}
 
+
 	public function testCannotCreateDirectory()
 	{
 		$path = TEMP_DIR . '/file';
@@ -80,7 +83,6 @@ class FileDriverTest extends TestCase
 		}, CriticalSectionException::class);
 		unlink($path);
 	}
-
 }
 
-run(new FileDriverTest());
+(new FileDriverTest)->run();

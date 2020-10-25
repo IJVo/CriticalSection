@@ -2,27 +2,28 @@
 
 declare(strict_types=1);
 
-/**
- * @testCase
- */
-
 namespace stekycz\CriticalSection\tests\Driver;
 
 use stekycz\CriticalSection\Driver\SemaphoreDriver;
 use TestCase;
 use Tester\Assert;
 
-require_once(__DIR__ . '/../bootstrap.php');
+require_once __DIR__ . '/../bootstrap.php';
 
+/**
+ * TEST: Driver:SemaphoreDriverTest
+ *
+ * @testCase
+ * @phpExtension sysvsem
+ */
 class SemaphoreDriverTest extends TestCase
 {
 
-	const TEST_LABEL = "test";
+	public const TEST_LABEL = 'test';
 
-	/**
-	 * @var SemaphoreDriver
-	 */
+	/** @var SemaphoreDriver */
 	private $driver;
+
 
 	protected function setUp()
 	{
@@ -30,11 +31,13 @@ class SemaphoreDriverTest extends TestCase
 		$this->driver = new SemaphoreDriver();
 	}
 
+
 	public function testCanAcquireOnce()
 	{
 		$label = __FUNCTION__;
 		Assert::true($this->driver->acquireLock($label));
 	}
+
 
 	public function testCanReleaseOnce()
 	{
@@ -42,7 +45,6 @@ class SemaphoreDriverTest extends TestCase
 		Assert::true($this->driver->acquireLock($label));
 		Assert::true($this->driver->releaseLock($label));
 	}
-
 }
 
-run(new SemaphoreDriverTest());
+(new SemaphoreDriverTest)->run();

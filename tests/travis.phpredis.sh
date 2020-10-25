@@ -5,9 +5,15 @@ mkdir /tmp/build-phpredis && cd /tmp/build-phpredis || exit 1
 if [ "$TRAVIS_PHP_VERSION" == "7.0" ]; then
 	PHP_REDIS_BRANCH="php7"
 elif [ "$TRAVIS_PHP_VERSION" == "7.1" ]; then
-	PHP_REDIS_BRANCH="3.1.1"
+	PHP_REDIS_BRANCH="5.3.2"
+elif [ "$TRAVIS_PHP_VERSION" == "7.2" ]; then
+	PHP_REDIS_BRANCH="5.3.2"
+elif [ "$TRAVIS_PHP_VERSION" == "7.3" ]; then
+	PHP_REDIS_BRANCH="5.3.2"
+elif [ "$TRAVIS_PHP_VERSION" == "7.4" ]; then
+	PHP_REDIS_BRANCH="5.3.2"
 else
-	PHP_REDIS_BRANCH="master"
+	PHP_REDIS_BRANCH="develop"
 fi
 
 wget -O phpredis.zip "https://github.com/phpredis/phpredis/archive/$PHP_REDIS_BRANCH.zip" && unzip phpredis.zip && cd phpredis-*/ || exit 1
