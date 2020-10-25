@@ -1,3 +1,5 @@
+os: linux 
+dist: xenial
 language: php
 php:
   - 7.1
@@ -6,14 +8,14 @@ php:
   - 7.4
 
 services:
-  - redis-server
+  - redis
 
 env:
   - PHP_BIN=php
   - PHP_BIN=php-cgi
 
 before_install:
-  - travis_retry composer self-update
+  - travis_retry composer self-update --2
 
 addons:
   apt:
@@ -33,24 +35,28 @@ jobs:
   - stage: Parallel Lint
     php: 7.4
     script:
+    - composer self-update --2
     - composer run-script php-parallel-lint-install
     - composer run-script php-parallel-lint
 
   - stage: Code Checker
     php: 7.4
     script:
+    - composer self-update --2
     - composer run-script code-checker-install
     - composer run-script code-checker
 
   - stage: Phpstan
     php: 7.4
     script:
+    - composer self-update --2
     - composer run-script phpstan-install
     - composer run-script phpstan
 
   - stage: Test Coverage
     php: 7.4
     script:
+    - composer self-update --2
     - composer run-script coverage
 
   allow_failures:
